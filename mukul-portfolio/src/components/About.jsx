@@ -1,5 +1,5 @@
 import './About.css'
-import myImg from '../assets/myImg.jpg'
+import myImg from '../assets/myImg.png'
 import { useInView } from '../hooks/useInView'
 
 export default function About() {
