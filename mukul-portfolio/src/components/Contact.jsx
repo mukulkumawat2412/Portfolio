@@ -2,21 +2,42 @@ import { useState } from 'react'
 import './Contact.css'
 import { FiMail, FiGithub, FiLinkedin, FiSend } from 'react-icons/fi'
 import { useInView } from '../hooks/useInView'
+import emailjs from '@emailjs/browser'
+
+const EMAILJS_SERVICE_ID  = 'service_1qhfn8l'
+const EMAILJS_TEMPLATE_ID = 'template_o6quuj9'
+const EMAILJS_PUBLIC_KEY  = 'CxbwzULzipEPGjCtH'
 
 export default function Contact() {
   const [form, setForm] = useState({ name: '', email: '', message: '' })
-  const [sent, setSent] = useState(false)
+  const [status, setStatus] = useState('idle') // idle | sending | success | error
   const [leftRef, leftIn] = useInView()
   const [rightRef, rightIn] = useInView()
 
   const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    const mailto = `mailto:mukulkumawat2412@gmail.com?subject=Portfolio Contact from ${form.name}&body=${encodeURIComponent(form.message)}%0A%0AFrom: ${form.email}`
-    window.location.href = mailto
-    setSent(true)
-    setTimeout(() => setSent(false), 4000)
+    setStatus('sending')
+    try {
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          title: `Portfolio Contact from ${form.name}`,
+          name: form.name,
+          email: form.email,
+          message: form.message,
+        },
+        EMAILJS_PUBLIC_KEY
+      )
+      setStatus('success')
+      setForm({ name: '', email: '', message: '' })
+      setTimeout(() => setStatus('idle'), 4000)
+    } catch {
+      setStatus('error')
+      setTimeout(() => setStatus('idle'), 4000)
+    }
   }
 
   return (
@@ -81,10 +102,16 @@ export default function Contact() {
               onChange={handleChange}
               required
             />
-            <button type="submit" className="btn-send">
+            <button type="submit" className="btn-send" disabled={status === 'sending'}>
               <FiSend />
-              {sent ? 'Opening mail client...' : 'Send Message'}
+              {status === 'sending' ? 'Sending...' : 'Send Message'}
             </button>
+            {status === 'success' && (
+              <p className="form-status success">Message sent! I'll get back to you soon.</p>
+            )}
+            {status === 'error' && (
+              <p className="form-status error">Something went wrong. Try again.</p>
+            )}
           </form>
         </div>
       </div>
