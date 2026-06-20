@@ -19,7 +19,7 @@ const projects = [
     description:
       'A modern news aggregator app with AI-powered summarization, category filtering, user authentication, and a clean reading experience.',
     tech: ['React', 'Node.js', 'Express', 'MongoDB', 'REST API'],
-    live: 'https://news-ai-rju1.vercel.app/login',
+    live: 'https://news-ai-rju1.vercel.app/',
     github: 'https://github.com/mukulkumawat2412/NewsPro',
     featured: true,
   },
